@@ -1,0 +1,199 @@
+﻿@using PAsswordRepos.Services.DbModels;
+@{
+    ViewData["Title"] = "Home Page";
+    var passwords = Model;
+    var error = ViewBag.Error;
+    var test = 1;
+
+}
+@model List<Password>
+@if (error != null)
+{
+   <div class="alert alert-warning alert-dismissible fade show" role="alert">
+ @error.ToString();
+  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+}
+
+<div class="text-center">
+    <form action="/Home/Index">
+       
+
+            <div class="mb-3">
+                <label for="exampleInputEmail1" class="form-label">Адресс почты/сайта</label>
+                <input type="text" class="form-control" id="Name" name="Name" aria-describedby="emailHelp">
+
+            </div>
+        <button type="submit" class="btn btn-primary">Найти по названию</button>
+    </form>
+    <table class="table">
+        <thead>
+            <tr>
+              
+                <th scope="col">Наименование</th>
+                <th scope="col">Пароль</th>
+                <th scope="col">Дата</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach(var item in passwords)
+            {
+                <tr class="column">
+                    
+                    <td>@item.Name</td>
+                    <td><p class="Password" style="display:none">@item.Password1</p>
+                        <p class="PasswordText">Пароль скрыт</p>
+                    </td>
+                    <td>@item.Date</td>
+                </tr>
+            }
+           
+        </tbody>
+    </table>
+</div>
+<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+    Добавить запись
+</button>
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Заголовок модального окна</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+            </div>
+            <form class="validate" action="/Home/AddPassword">
+            <div class="modal-body">
+               
+                    <div class="mb-3">
+                        <label for="exampleInputEmail1" class="form-label">Адресс почты/сайта</label>
+                        <input type="text" class="form-control" id="Name" name="Name" aria-describedby="emailHelp">
+                        
+                    </div>
+                    <div class="mb-3">
+                        <label for="exampleInputPassword1" class="form-label">Пароль</label>
+                        <input type="text" class="form-control" name="Password1" id="Password1">
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="TypePassword" id="flexRadioDefault1" value="1" checked>
+                        <label class="form-check-label" for="flexRadioDefault1">
+                            Сайт
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="TypePassword" value="2" id="flexRadioDefault2" >
+                        <label class="form-check-label" for="flexRadioDefault2">
+                            Почта
+                        </label>
+                    </div>
+                   
+               
+            </div>
+          
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                    <button type="submit" class="btn btn-primary">Сохранить</button>
+            </div>
+               </form>
+        </div>
+    </div>
+</div>
+@section Scripts{
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/jquery.validate.min.js"></script>
+    <script>
+        $(".column").click(function () {
+            var atr = $(this).find(".Password");
+            if(atr.css("display")== "none"){
+                $(this).find(".Password").css("display", "block")
+                $(this).find(".PasswordText").css("display", "none")
+            }
+            else{
+                $(this).find(".Password").css("display", "none")
+                $(this).find(".PasswordText").css("display", "block")
+            }
+          
+        });
+    </script>
+    <script>
+      
+       var valid =     $(".validate").validate({
+                rules: {
+                    Password1: {
+                        minlength: 8,
+                        required: true,
+                    },
+                    Name: {
+                        required: true,
+
+                    }
+                },
+                messages: {
+                    Password1: {
+                        minlength: "минимальная длина 8 символов",
+                        required: "введите пароль",
+                    },
+                    Name: {
+                        required: "Введите пожалуйста адресс сайта",
+
+                    }
+                }
+            });
+            $(".form-check-input").click(function(){
+               
+                if($(this).val() == 1){
+                    $("#Name").attr("type","text")
+                    valid.destroy();
+                    $(".validate").validate({
+                        rules: {
+                            Password1: {
+                                minlength: 8,
+                                required: true,
+                            },
+                            Name: {
+                                required: true,
+                               
+                            }
+                        },
+                        messages: {
+                            Password1: {
+                                minlength: "минимальная длина 8 символов",
+                                required: "введите пароль",
+                            },
+                            Name: {
+                                required: "Введите пожалуйста адресс сайта",
+                               
+                            }
+                        }
+                    });
+                }
+                if ($(this).val() == 2) {
+                    $("#Name").attr("type", "email")
+                    valid.destroy()
+                    $(".validate").validate({
+                        rules: {
+                            Password1: {
+                                minlength: 8,
+                                required: true,
+                            },
+                            Name: {
+                                required: true,
+                                email: true
+                            }
+                        },
+                        messages: {
+                            Password1: {
+                                minlength: "минимальная длина 8 символов",
+                                required: "введите пароль",
+                            },
+                            Name: {
+                                required: "Введите пожалуйста адресс почты",
+                                email: "Пример того как должна выглядить почта Some@gmail.com"
+                            }
+                        }
+                    });
+                };
+            })
+        })
+       
+    </script>
+}
